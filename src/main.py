@@ -5,12 +5,13 @@ STOCK_NAME = "TSLA"
 COMPANY_NAME = "Tesla Inc"
 STOCK_ENDPOINT = "https://www.alphavantage.co/query"
 NEWS_ENDPOINT = "https://newsapi.org/v2/everything"
-api_key = os.environ.get('ALPHAV_API_KEY')
+ALPHAV_API_KEY = os.environ.get('ALPHAV_API_KEY')
+NEWS_API_KEY = os.environ.get('NEWS_API_KEY')
 
 parameters = {
     'function':'TIME_SERIES_DAILY',
     'symbol':STOCK_NAME,
-    "apikey": api_key
+    'apikey': ALPHAV_API_KEY
 }
 
 response = requests.get(STOCK_ENDPOINT, params=parameters)
@@ -30,6 +31,13 @@ print(difference)
 diff_percent = (difference / float(yesterday_closing_price)) * 100
 print(diff_percent)
 
-if diff_percent > 4:
-    print('Get news')
+if diff_percent > 1:
+    news_parameters = {
+        'apiKey':NEWS_API_KEY,
+        'qInTitle':COMPANY_NAME,
+    }
 
+    news_response = requests.get(NEWS_ENDPOINT, params=news_parameters)
+    articles = news_response.json()['articles']
+    three_articles = articles[:3]
+    print(three_articles)
